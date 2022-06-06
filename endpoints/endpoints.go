@@ -10,27 +10,26 @@ import (
 
 // JobStateEndpoints wraps all of the service's endpoints.
 type JobStateEndpoints struct {
-    CreateJobState endpoint.Endpoint
+	CreateJobState endpoint.Endpoint
 }
 
 // NewJobStateEndpoints returns an initialized JobStateEndpoints struct.
 func NewJobStateEndpoints(svc service.JobStateService) JobStateEndpoints {
-    return JobStateEndpoints{
-        CreateJobState: makeCreateJobStateEndpoint(svc),
-    }
+	return JobStateEndpoints{
+		CreateJobState: makeCreateJobStateEndpoint(svc),
+	}
 }
 
 // makeCreateJobStateEndpoint returns an endpoint that invokes CreateJobState on the service.
 func makeCreateJobStateEndpoint(svc service.JobStateService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
-        req := request.(service.CreateJobState)
+		req := request.(service.CreateJobState)
 
-        result, err := svc.CreateJobState(req)
-        if err != nil {
-            return nil, err
-        }
+		result, err := svc.CreateJobState(req)
+		if err != nil {
+			return nil, err
+		}
 
-        return result, nil
-    }
+		return result, nil
+	}
 }
-

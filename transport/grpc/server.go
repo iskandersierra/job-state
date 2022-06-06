@@ -12,7 +12,7 @@ import (
 
 // jobStateGRPCServer is a gRPC server that decodes requests to JobStateService
 type jobStateGRPCServer struct {
-    pb.UnimplementedJobStateServiceServer
+	pb.UnimplementedJobStateServiceServer
 	createJobState grpcTransport.Handler
 }
 
@@ -37,9 +37,9 @@ var _ pb.JobStateServiceServer = &jobStateGRPCServer{}
 // CreateJobState implements pb.JobStateServiceServer
 func (server *jobStateGRPCServer) CreateJobState(ctx context.Context, request *pb.CreateJobStateRequest) (*pb.CreateJobStateResponse, error) {
 	_, resp, err := server.createJobState.ServeGRPC(ctx, request)
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    return resp.(*pb.CreateJobStateResponse), nil
+	return resp.(*pb.CreateJobStateResponse), nil
 }

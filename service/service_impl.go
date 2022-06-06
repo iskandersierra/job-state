@@ -12,21 +12,21 @@ type jobStateServiceImpl struct {
 
 // NewJobStateService returns a new instance of the default JobStateService implementation.
 func NewJobStateService() JobStateService {
-    return &jobStateServiceImpl{}
+	return &jobStateServiceImpl{}
 }
 
 // CreateJobState creates a new job state.
 func (service *jobStateServiceImpl) CreateJobState(command CreateJobState) (JobState, error) {
-    id, err := uuid.NewV4()
-    if err != nil {
-        return JobState{}, err
-    }
+	id, err := uuid.NewV4()
+	if err != nil {
+		return JobState{}, err
+	}
 
-    result := JobState{
-        Id: id.String(),
-        Title: command.Title,
-        CreatedAt: time.Now(),
-    }
+	result := JobState{
+		Id:        id.String(),
+		Title:     command.Title,
+		CreatedAt: time.Now(),
+	}
 
-    return result, nil
+	return result, nil
 }
