@@ -1,6 +1,12 @@
 build:
 	go build -o bin/ ./cmd/api/.
 
+dev:
+	air
+
+run:
+	go run ./cmd/api/main.go
+
 fmt:
 	gofmt -s -w .
 
