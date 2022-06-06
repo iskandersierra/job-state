@@ -24,13 +24,14 @@ func main() {
 	jobStateServer := createJobStateServer(logger)
 
 	errorsChannel := createErrorsChannel()
-	defer level.Error(logger).Log("exit", <-errorsChannel)
 
 	err := startServer(logger, jobStateServer)
 	if err != nil {
 		level.Error(logger).Log("during", "startServer", "err", err)
 		os.Exit(1)
 	}
+
+	level.Error(logger).Log("exit", <-errorsChannel)
 }
 
 func createLogger() log.Logger {
