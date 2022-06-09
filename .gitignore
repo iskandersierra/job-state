@@ -23,3 +23,6 @@ go.work
 
 # Air tmp files
 tmp/
+
+# Log files
+*.log
