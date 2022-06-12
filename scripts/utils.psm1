@@ -103,18 +103,19 @@ function Confirm-CommandLineTool {
 
   Write-Verbose ("✓ Found $Title at $($AppInfo.Source) with version $($AppInfo.Version)")
 
-  if ($PSBoundParameters.ContainsKey("Version")) {
+  if ($Version -ne "0.0.0.0") {
     $ActualVersion = $AppInfo.Version
-    if ($PSBoundParameters.ContainsKey("VersionArgs")) {
+    if (![string]::IsNullOrWhiteSpace($VersionArgs)) {
       $VersionResult = ""
-      Invoke-Expression -Command "$Command $VersionArgs" -OutVariable VersionResult -ErrorAction SilentlyContinue | Out-Null
+      $CommandExpr = "$Command $VersionArgs"
+      Invoke-Expression -Command $CommandExpr -OutVariable VersionResult -ErrorAction SilentlyContinue | Out-Null
       if (-not $?) {
         Write-Host ("❌ $Title version cannot be determined: $DownloadUrl") -ForegroundColor Red
         Exit-OnSwitch -ExitOnError:$ExitOnError
         return
       }
 
-      if ($PSBoundParameters.ContainsKey("VersionPattern")) {
+      if (![string]::IsNullOrWhiteSpace($VersionPattern)) {
         $Match = [regex]::Match($VersionResult, $VersionPattern)
         if ($Match.Success -and ($VersionPatternGroup -lt $Match.Groups.Count)) {
           $VersionResult = $Match.Groups[$VersionPatternGroup].Value
@@ -123,14 +124,14 @@ function Confirm-CommandLineTool {
           Exit-OnSwitch -ExitOnError:$ExitOnError
           return
         }
-      } ### if ($PSBoundParameters.ContainsKey("VersionPattern"))
+      } ### if (![string]::IsNullOrWhiteSpace($VersionPattern))
 
       if (-not [System.Version]::TryParse($VersionResult, [ref] $ActualVersion)) {
         Write-Host ("❌ $Title version cannot be parsed: $DownloadUrl") -ForegroundColor Red
         Exit-OnSwitch -ExitOnError:$ExitOnError
         return
       }
-    } ### if ($PSBoundParameters.ContainsKey("VersionArgs"))
+    } ### if (![string]::IsNullOrWhiteSpace($VersionArgs))
 
     if ($Version -ne $null) {
       if ($ActualVersion -lt $Version) {
@@ -140,15 +141,73 @@ function Confirm-CommandLineTool {
         return
       }
     } ### if ($Version -ne $null)
-  } ### if ($PSBoundParameters.ContainsKey("Version"))
+  } ### if (![string]::IsNullOrWhiteSpace($Version))
 
-  if ($null -ne $ActualVersion) {
+  if ($ActualVersion -ne "0.0.0.0") {
     Write-Host ("✅ $Title is installed with version $($ActualVersion)")
   } else {
     Write-Host ("✅ $Title is installed")
   }
 }
 
+
+function Confirm-CommandLineTools {
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]
+    $JsonFile,
+    [Parameter()]
+    [switch]
+    $ExitOnError
+  )
+
+  $Json = Get-Content $JsonFile -Raw -ErrorAction SilentlyContinue
+
+  if (-not $?) {
+    Write-Host ("❌ Cannot read $JsonFile") -ForegroundColor Red
+    Exit-OnSwitch -ExitOnError:$ExitOnError
+    return
+  }
+
+  $Json = $Json | ConvertFrom-Json
+
+  foreach ($Category in $Json.categories) {
+    Write-Host $Category.title -ForegroundColor Green
+    Write-Host ("-" * ($Category.title.Length)) -ForegroundColor White
+
+    foreach ($Tool in $Category.tools) {
+      $Parameters = @{
+        Title = $Tool.title
+        Command = $Tool.command
+      }
+      if ([bool]$Tool.PSObject.Properties["version"]) {
+        $Parameters["Version"] = $Tool.version
+      }
+      if ([bool]$Tool.PSObject.Properties["versionArgs"]) {
+        $Parameters["VersionArgs"] = $Tool.versionArgs
+      }
+      if ([bool]$Tool.PSObject.Properties["versionPattern"]) {
+        $Parameters["VersionPattern"] = $Tool.versionPattern
+      }
+      if ([bool]$Tool.PSObject.Properties["versionPatternGroup"]) {
+        $Parameters["VersionPatternGroup"] = $Tool.versionPatternGroup
+      }
+      if ([bool]$Tool.PSObject.Properties["url"]) {
+        $Parameters["DownloadUrl"] = $Tool.url
+      }
+      if ([bool]$Tool.PSObject.Properties["optional"]) {
+        $Parameters["Optional"] = $Tool.optional
+      } else {
+        $Parameters["Optional"] = $false
+      }
+
+      Confirm-CommandLineTool @Parameters -ExitOnError:$ExitOnError  -Verbose:$VerbosePreference
+    }
+
+    Write-Host ""
+  }
+}
 
 function Set-DotEnv {
   [CmdLetBinding(SupportsShouldProcess = $true, ConfirmImpact = "Low")]

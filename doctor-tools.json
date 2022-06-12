@@ -1,0 +1,119 @@
+{
+    "categories": [
+        {
+            "title": "Build Tools",
+            "tools": [
+                {
+                    "title": "Go",
+                    "command": "go",
+                    "version": "1.18",
+                    "versionArgs": "version",
+                    "versionPattern": "go version go([0-9\\.]+)",
+                    "versionPatternGroup": 1,
+                    "url": "https://golang.org/dl/"
+                },
+                {
+                    "title": "Air",
+                    "command": "air",
+                    "url": "https://github.com/cosmtrek/air#installation"
+                },
+                {
+                    "title": "Make",
+                    "command": "make",
+                    "optional": true,
+                    "version": "4.3",
+                    "versionArgs": "--version",
+                    "versionPattern": "GNU Make ([0-9\\.]+)",
+                    "versionPatternGroup": 1,
+                    "url": "https://community.chocolatey.org/packages/make"
+                },
+                {
+                    "title": "ProtoC",
+                    "command": "protoc",
+                    "optional": true,
+                    "version": "3.20",
+                    "versionArgs": "--version",
+                    "versionPattern": "libprotoc ([0-9\\.]+)",
+                    "versionPatternGroup": 1,
+                    "url": "https://github.com/protocolbuffers/protobuf/releases"
+                },
+                {
+                    "title": "ProtoC Go Generator",
+                    "command": "protoc-gen-go",
+                    "optional": true,
+                    "version": "1.28",
+                    "versionArgs": "--version",
+                    "versionPattern": "protoc-gen-go\\.exe v([0-9\\.]+)",
+                    "versionPatternGroup": 1,
+                    "url": "https://grpc.io/docs/languages/go/quickstart/"
+                },
+                {
+                    "title": "ProtoC Go gRPC Generator",
+                    "command": "protoc-gen-go-grpc",
+                    "optional": true,
+                    "version": "1.2",
+                    "versionArgs": "--version",
+                    "versionPattern": "protoc-gen-go-grpc ([0-9\\.]+)",
+                    "versionPatternGroup": 1,
+                    "url": "https://grpc.io/docs/languages/go/quickstart/"
+                }
+            ]
+        },
+        {
+            "title": "Database Tools",
+            "tools": [
+                {
+                    "title": "Migrate",
+                    "command": "migrate",
+                    "url": "https://github.com/golang-migrate/migrate/releases"
+                }
+            ]
+        },
+        {
+            "title": "Version Control",
+            "tools": [
+                {
+                    "title": "Git",
+                    "command": "git",
+                    "optional": false,
+                    "version": "2.33",
+                    "url": "https://git-scm.com/downloads"
+                }
+            ]
+        },
+        {
+            "title": "Local Development",
+            "tools": [
+                {
+                    "title": "Docker",
+                    "command": "docker",
+                    "optional": true,
+                    "version": "20.10",
+                    "versionArgs": "--version",
+                    "versionPattern": "version ([0-9\\.]+)",
+                    "versionPatternGroup": 1,
+                    "url": "https://www.docker.com/products/docker-desktop/"
+                },
+                {
+                    "title": "Docker Compose",
+                    "command": "docker-compose",
+                    "optional": true,
+                    "version": "1.29",
+                    "versionArgs": "--version",
+                    "versionPattern": "version ([0-9\\.]+)",
+                    "versionPatternGroup": 1,
+                    "url": "https://docs.docker.com/compose/install/"
+                },
+                {
+                    "title": "Microsoft Tye",
+                    "command": "tye",
+                    "optional": true,
+                    "version": "0.11.0",
+                    "versionArgs": "--version",
+                    "versionPattern": "^[0-9\\.]+",
+                    "url": "https://www.nuget.org/packages/Microsoft.Tye"
+                }
+            ]
+        }
+    ]
+}
