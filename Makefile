@@ -1,5 +1,6 @@
 build:
-	go build -o bin/ ./cmd/api/.
+	go build -o bin/job-state-api.exe ./cmd/api/.
+	pwsh -c "Copy-Item '.env' -Destination './bin/'"
 
 dev:
 	air
