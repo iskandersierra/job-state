@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/subosito/gotenv"
+
 	"google.golang.org/grpc"
 
 	"github.com/go-kit/kit/log"
@@ -19,6 +21,8 @@ import (
 )
 
 func main() {
+	gotenv.Load(".env")
+
 	logger := createLogger()
 
 	jobStateServer := createJobStateServer(logger)

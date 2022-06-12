@@ -1,0 +1,10 @@
+CREATE TABLE [jobs].[JobState]
+(
+    Id CHAR(22) NOT NULL,
+
+    Title NVARCHAR(100) NOT NULL,
+
+    CreatedAt DATETIME2 NOT NULL,
+
+    CONSTRAINT [PK__JobState] PRIMARY KEY CLUSTERED ([Id] ASC)
+);

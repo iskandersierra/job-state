@@ -26,7 +26,7 @@ services:
       - '1433:1433'
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Passw0rd
+      - SA_PASSWORD=P4ssword
     volumes:
       - sql-data:/var/opt/mssql
 

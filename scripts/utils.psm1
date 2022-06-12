@@ -148,3 +148,52 @@ function Confirm-CommandLineTool {
     Write-Host ("✅ $Title is installed")
   }
 }
+
+
+function Set-DotEnv {
+  [CmdLetBinding(SupportsShouldProcess = $true, ConfirmImpact = "Low")]
+  param(
+    [Parameter()]
+    [string]
+    $DotEnvFile = ".\.env",
+    [Parameter()]
+    [System.EnvironmentVariableTarget]
+    $Target = [System.EnvironmentVariableTarget]::Process
+  )
+
+  if (!(Test-Path $DotEnvFile)) {
+    Write-Verbose ("$DotEnvFile does not exist")
+    return
+  }
+
+  $DotEnvContent = Get-Content $DotEnvFile -ErrorAction Stop
+  if ($null -eq $DotEnvContent -or $DotEnvContent.Count -eq 0) {
+    Write-Verbose ("$DotEnvFile is empty")
+    return
+  }
+
+  $LineCount = 0
+  foreach ($Line in $DotEnvContent) {
+    $LineCount += 1
+
+    # Skip empty lines and comments
+    if ([string]::IsNullOrWhiteSpace($Line) -or $Line -match "^\s*#") {
+      continue
+    }
+
+    # Split the line into key and value
+    if (!($Line -match "^([^=`"']+)=(.*)$")) {
+      Write-Verbose ("$DotEnvFile line $LineCount` is invalid: $Line")
+      continue
+    }
+
+    $Key = $matches[1]
+    $Value = $matches[2]
+
+    Write-Verbose ("Setting $Key to $Value")
+
+    if ($PSCmdlet.ShouldProcess("Env Var $Key", "Set Value $Value")) {
+      [System.Environment]::SetEnvironmentVariable($Key, $Value, $Target) | Out-Null
+    }
+  }
+}
