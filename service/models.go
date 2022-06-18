@@ -11,5 +11,5 @@ type JobState struct {
 
 // CreateJobState is the struct that represents the command to create a job state.
 type CreateJobState struct {
-	Title string `json:"title"`
+	Title string `json:"title" validate:"required,min=3,max=100"`
 }

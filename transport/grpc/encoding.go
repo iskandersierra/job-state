@@ -10,15 +10,15 @@ import (
 
 func decodeCreateJobStateRequest(_ context.Context, request interface{}) (interface{}, error) {
 	req := request.(*pb.CreateJobStateRequest)
-	result := service.CreateJobState{
+	result := &service.CreateJobState{
 		Title: req.Title,
 	}
 	return result, nil
 }
 
 func encodeCreateJobStateResponse(_ context.Context, response interface{}) (interface{}, error) {
-	res := response.(service.JobState)
-	result := pb.CreateJobStateResponse{
+	res := response.(*service.JobState)
+	result := &pb.CreateJobStateResponse{
 		JobState: &pb.JobStateModel{
 			Id:        res.Id,
 			Title:     res.Title,

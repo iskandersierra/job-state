@@ -141,7 +141,7 @@ function Confirm-CommandLineTool {
         return
       }
     } ### if ($Version -ne $null)
-  } ### if (![string]::IsNullOrWhiteSpace($Version))
+  } ### if ($Version -ne "0.0.0.0")
 
   if ($ActualVersion -ne "0.0.0.0") {
     Write-Host ("✅ $Title is installed with version $($ActualVersion)")

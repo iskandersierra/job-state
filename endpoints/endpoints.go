@@ -23,7 +23,7 @@ func NewJobStateEndpoints(svc service.JobStateService) JobStateEndpoints {
 // makeCreateJobStateEndpoint returns an endpoint that invokes CreateJobState on the service.
 func makeCreateJobStateEndpoint(svc service.JobStateService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
-		req := request.(service.CreateJobState)
+		req := request.(*service.CreateJobState)
 
 		result, err := svc.CreateJobState(req)
 		if err != nil {

@@ -7,25 +7,22 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/subosito/gotenv"
-
 	"google.golang.org/grpc"
 
-	"gorm.io/gorm"
 	"gorm.io/driver/sqlserver"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 
 	"github.com/iskandersierra/job-state/endpoints"
-	"github.com/iskandersierra/job-state/pb"
+	pb "github.com/iskandersierra/job-state/pb"
 	"github.com/iskandersierra/job-state/service"
 	transport "github.com/iskandersierra/job-state/transport/grpc"
 )
 
 func StartApi() error {
-	gotenv.Load(".env")
-
 	logger := createLogger()
 
 	db, err := connectDatabase()
@@ -56,6 +53,30 @@ func createLogger() log.Logger {
 	return logger
 }
 
+type nameReplacerNoop struct{}
+
+// Replace implements schema.Replacer
+func (nameReplacerNoop) Replace(name string) string {
+	return name
+}
+
+func connectDatabase() (*gorm.DB, error) {
+	connectionString := os.Getenv("SQLSERVER_CONNECTION_STRING")
+
+	sqlConn := sqlserver.Open(connectionString)
+
+	config := gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix:   "jobs.",
+			NameReplacer:  nameReplacerNoop{},
+			SingularTable: true,
+			NoLowerCase:   true,
+		},
+	}
+
+	return gorm.Open(sqlConn, &config)
+}
+
 func createJobStateServer(
 	db *gorm.DB,
 	logger log.Logger) pb.JobStateServiceServer {
@@ -81,10 +102,14 @@ func startServer(
 	logger log.Logger,
 	jobStateServer pb.JobStateServiceServer) error {
 
-	listener, err := net.Listen("tcp", ":51051")
+	addr := os.Getenv("JOBSTATE_ADDR")
+
+	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		return err
 	}
+
+	fmt.Printf("Listening on port %s\n", addr)
 
 	go func() {
 		baseServer := grpc.NewServer()
@@ -94,12 +119,4 @@ func startServer(
 	}()
 
 	return nil
-}
-
-func connectDatabase() (*gorm.DB, error) {
-	connectionString := os.Getenv("SQLSERVER_CONNECTION_STRING")
-
-	sqlConn := sqlserver.Open(connectionString)
-
-	return gorm.Open(sqlConn, &gorm.Config{})
 }
