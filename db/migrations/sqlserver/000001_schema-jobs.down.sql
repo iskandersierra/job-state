@@ -1,1 +1,1 @@
-DROP SCHEMA [jobs];
+DROP SCHEMA jobs;

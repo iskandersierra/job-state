@@ -38,13 +38,14 @@ func (repl *ReplService) Start() error {
 	ctx := context.Background()
 	response, err := client.CreateJobState(ctx, &pb.CreateJobStateRequest{
 		Title: "New job",
+		JobType: "create-client",
 	})
 	if err != nil {
 		return err
 	}
 
-	model := response.JobState
-	fmt.Println("Created JobState: " + model.Id)
+	jobId := response.JobId
+	fmt.Println("Created JobState: " + jobId)
 
 	return nil
 }

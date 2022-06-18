@@ -6,6 +6,7 @@ import (
 	"github.com/go-kit/kit/endpoint"
 
 	"github.com/iskandersierra/job-state/service"
+	"github.com/iskandersierra/job-state/service/models"
 )
 
 // JobStateEndpoints wraps all of the service's endpoints.
@@ -23,7 +24,7 @@ func NewJobStateEndpoints(svc service.JobStateService) JobStateEndpoints {
 // makeCreateJobStateEndpoint returns an endpoint that invokes CreateJobState on the service.
 func makeCreateJobStateEndpoint(svc service.JobStateService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
-		req := request.(*service.CreateJobState)
+		req := request.(*models.CreateJobState)
 
 		result, err := svc.CreateJobState(req)
 		if err != nil {

@@ -6,16 +6,65 @@ service JobStateService {
     rpc CreateJobState(CreateJobStateRequest) returns (CreateJobStateResponse) {}
 }
 
-message JobStateModel {
-    string id = 1;
+enum JobStateStatusEnum {
+    STEP_KIND_UNKNOWN = 0;
+    STEP_KIND_CREATED = 1;
+    STEP_KIND_UPDATED = 2;
+    STEP_KIND_COMPLETED = 3;
+    STEP_KIND_FAILED = 4;
+}
+
+message OptionalJobMetadata {
+    map<string,string> metadata = 1;
+}
+
+message OptionalJobDateTime {
+    string date = 1;
+}
+
+message JobState {
+    string job_id = 1;
+
     string title = 2;
-    string created_at = 3;
+    string job_type = 3;
+    int32 step_count = 4;
+    repeated JobStateStep steps = 5;
+    JobStateStep last_step = 6;
+    map<string,string> metadata = 7;
+    OptionalJobMetadata error = 8;
+
+    string created_at = 9;
+    string updated_at = 10;
+    OptionalJobDateTime finished_at = 11;
+}
+
+message JobStateStep {
+    int32 step_id = 1;
+
+    string step_title = 2;
+    string step_type = 3;
+    int32 progress = 4;
+    JobStateStatusEnum status = 5;
+    map<string,string> metadata = 6;
+    OptionalJobMetadata error = 7;
+
+    string created_at = 8;
 }
 
 message CreateJobStateRequest {
     string title = 1;
+    string job_type = 2;
+    int32 step_count = 3;
+    map<string,string> metadata = 4;
+
+    string step_title = 5;
+    string step_type = 6;
+    double progress = 7;
+    JobStateStatusEnum status = 8;
+    map<string,string> step_metadata = 9;
+    OptionalJobMetadata step_error = 10;
 }
 
 message CreateJobStateResponse {
-    JobStateModel job_state = 1;
+    string job_id = 1;
 }

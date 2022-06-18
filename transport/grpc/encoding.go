@@ -2,28 +2,49 @@ package grpc
 
 import (
 	"context"
-	"time"
 
 	"github.com/iskandersierra/job-state/pb"
-	"github.com/iskandersierra/job-state/service"
+	"github.com/iskandersierra/job-state/service/models"
 )
 
 func decodeCreateJobStateRequest(_ context.Context, request interface{}) (interface{}, error) {
-	req := request.(*pb.CreateJobStateRequest)
-	result := &service.CreateJobState{
-		Title: req.Title,
+	request, err := fromProtoCreateJobStateRequest(request.(*pb.CreateJobStateRequest))
+	if err != nil {
+		return nil, err
 	}
-	return result, nil
+	return request, nil
+}
+
+func fromProtoCreateJobStateRequest(req *pb.CreateJobStateRequest) (*models.CreateJobState, error) {
+	stepError := map[string]string(nil)
+	if req.StepError != nil {
+		stepError = req.StepError.Metadata
+	}
+
+	return &models.CreateJobState{
+		Title:    req.Title,
+		JobType:  req.JobType,
+		Metadata: req.Metadata,
+
+		StepTitle:    req.StepTitle,
+		StepType:     req.StepType,
+		Progress:     int(req.Progress),
+		Status:       models.JobStateStatus(req.Status),
+		StepMetadata: req.StepMetadata,
+		Error:        stepError,
+	}, nil
 }
 
 func encodeCreateJobStateResponse(_ context.Context, response interface{}) (interface{}, error) {
-	res := response.(*service.JobState)
-	result := &pb.CreateJobStateResponse{
-		JobState: &pb.JobStateModel{
-			Id:        res.Id,
-			Title:     res.Title,
-			CreatedAt: res.CreatedAt.UTC().Format(time.RFC3339),
-		},
+	response, err := toProtoCreateJobStateResponse(response.(*models.CreateJobStateResult))
+	if err != nil {
+		return nil, err
 	}
-	return result, nil
+	return response, nil
+}
+
+func toProtoCreateJobStateResponse(res *models.CreateJobStateResult) (*pb.CreateJobStateResponse, error) {
+	return &pb.CreateJobStateResponse{
+		JobId: res.JobId,
+	}, nil
 }
